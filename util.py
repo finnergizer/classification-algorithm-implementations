@@ -14,3 +14,13 @@ def stdev(nums):
 def calc_probability(x, mean, stdev):
     exponent = math.exp(-(math.pow(x-mean,2)/(2*math.pow(stdev,2))))
     return (1 / (math.sqrt(2*math.pi) * stdev)) * exponent
+
+def calc_probability_kde(x, means, stdev):
+    val = 0
+    for ui in means:
+        exponent = math.exp(-(math.pow(x-ui,2)/(2*math.pow(stdev,2))))
+        val += (1 / (math.sqrt(2*math.pi) * stdev)) * exponent
+    return val/float(len(means))
+
+def column(matrix, i):
+    return [row[i] for row in matrix]
