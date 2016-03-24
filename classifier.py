@@ -1,19 +1,12 @@
 import scipy.io
 import random
 import util
-from sklearn import svm
-from sklearn import linear_model
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.naive_bayes import BernoulliNB
-from sklearn.tree import DecisionTreeClassifier
 import math
 from scipy import optimize
 
 import numpy as np
 
-class Classifier(object):
+class NBClassifier(object):
 
     def __init__(self):
         return
@@ -111,41 +104,6 @@ class Classifier(object):
                     incorrect += 1
         return (correct, incorrect)
 
-    def clf_with_svm(self):
-        # clf = svm.SVC()
-        # clf = BernoulliNB()
-        # clf = DecisionTreeClassifier()
-        clf = linear_model.LogisticRegression()
-        data = self.load_split_data("./observed/classify_d99_k50_saved2.mat")
-        X = []
-        y = []
-        for cls in ['class_1', 'class_2']:
-            for i in range(len(data['train'][cls][0])):
-                sample = []
-                for j in range(len(data['train'][cls])):
-                    sample.append(data['train'][cls][j][i])
-                sample = np.array(sample)
-                X.append(sample)
-                y.append(cls)
-        X=np.array(X)
-        y=np.array(y)
-        print "Fitting..."
-        clf.fit(X, y)
-        correct, incorrect = 0, 0
-        for cls in ['class_1', 'class_2']:
-            for i in range(len(data['test'][cls][0])):
-                sample = []
-                for j in range(len(data['test'][cls])):
-                    sample.append(data['test'][cls][j][i])
-                sample = [sample]
-                prediction = clf.predict(sample)
-                if prediction == cls:
-                    correct += 1
-                else:
-                    incorrect +=1
-        test_results = (correct, incorrect)
-        print "Correct: {correct}, Incorrect: {incorrect}, Accuracy: {accuracy:0.2f}".format(
-            correct=test_results[0], incorrect=test_results[1], accuracy=test_results[0]/float(sum(test_results)))
 
 
 
@@ -163,7 +121,7 @@ class Classifier(object):
 # clf.clf_with_svm()
 
 
-class LRClassifier():
+class LogisticRegressionClassifier():
 
     def __init__(self):
         self.data = None;
@@ -171,7 +129,7 @@ class LRClassifier():
         self.theta = None;
         return
 
-    def load_split_data(self, file_name="./observed/classify_d3_k2_saved1.mat", test_percentage=0.1):
+    def load_split_data(self, file_name="./observed/classify_d3_k2_saved1.mat", test_percentage=0.3):
         data = scipy.io.loadmat(file_name)
         train = {}
         test = {}
@@ -181,8 +139,8 @@ class LRClassifier():
             test[cls] = [[] for f in matrix]
             pop_count = int(len(matrix[0])*test_percentage)
             for i in range(pop_count):
-                pop_index = random.choice(range(len(matrix[0])))
-                # pop_index = 0
+                # pop_index = random.choice(range(len(matrix[0])))
+                pop_index = 0
                 for idx, feature_vec in enumerate(matrix):
                     test[cls][idx].append(feature_vec.pop(pop_index))
             train[cls] = matrix
@@ -197,7 +155,7 @@ class LRClassifier():
 
 
     def __cost(self, theta, x, y):
-        return (-y*(math.log(self.hypothesis(theta, x))) - (1-y)*math.log(1-self.hypothesis(theta, x)))
+        return (-y*(math.log(self.hypothesis(theta, x))) - (1-y)*math.log(1+1e-10-self.hypothesis(theta, x)))
 
     def hypothesis(self, theta, x):
         return 1/(1+math.exp(-(np.dot(np.transpose(theta), x))))
@@ -240,11 +198,72 @@ class LRClassifier():
             correct=test_results[0], incorrect=test_results[1], accuracy=test_results[0]/float(sum(test_results)))
         return
 
-lrc = LRClassifier()
+lrc = LogisticRegressionClassifier()
 # data = lrc.load_split_data()
 # lrc.data = lrc.transform_training_data(data)
 # xopt = optimize.fmin(lrc.J, x0=[1]*len(lrc.data[0][0]))
 
-lrc.train("./observed/classify_d5_k3_saved2.mat")
-lrc.test()
+# lrc.train("./observed/classify_d99_k50_saved2.mat")
+# lrc.test()
+
+
+class KNearestNeighbourClassifier():
+    def __init__(self, data):
+        self.data = data
+        self.training_data = None
+        return
+
+    def train(self, data):
+        training_data = []
+        for cls in ["class_1", "class_2"]:
+            for feature in np.transpose(data['train'][cls]):
+                training_data.append((feature, cls))
+        return training_data
+
+    def get_nearest_neighbhours(self, training_data, test_instance, k_neighbours=None):
+        items_with_distances = []
+        for item in training_data:
+            dist = util.euclidean_distance(item[0], test_instance)
+            items_with_distances.append({"item":item, "distance":dist})
+        items_with_distances = sorted(items_with_distances, key=lambda k:k["distance"])
+        if k_neighbours != None:
+            return items_with_distances[:k_neighbours]
+        else:
+            return items_with_distances
+
+    def compute_class(self, test_instance, training_data, k_neighbours=51):
+        class1, class2 = 0,0
+        neighbours=self.get_nearest_neighbhours(training_data, test_instance, k_neighbours)
+        for n in neighbours:
+            if n["item"][1] == "class_1":
+                class1 += 1
+            elif n["item"][1] == "class_2":
+                class2 += 1
+        return "class_1" if class1 > class2 else "class_2"
+
+    def test(self, training_data):
+
+        incorrect, correct = 0, 0
+        for item in np.transpose(self.data['test']['class_1']):
+            if self.compute_class(item, training_data) == "class_1":
+                correct += 1
+            else:
+                incorrect += 1
+        for item in np.transpose(self.data['test']['class_2']):
+            if self.compute_class(item, training_data) == "class_2":
+                correct += 1
+            else:
+                incorrect += 1
+        test_results = (correct, incorrect)
+        # print "Correct: {correct}, Incorrect: {incorrect}, Accuracy: {accuracy:0.2f}".format(
+        #     correct=test_results[0], incorrect=test_results[1], accuracy=test_results[0]/float(sum(test_results)))
+        return test_results
+
+
+
+# data = util.load_split_data()
+# knn_classifier = KNNClassifier(data)
+# training_data = knn_classifier.train(data)
+# knn_classifier.test(training_data)
+
 
