@@ -14,7 +14,7 @@ def stdev(nums):
     return math.sqrt(variance(nums))
 
 
-def calc_probability(x, mean, stdev):
+def calc_probability_gaussian(x, mean, stdev):
     """
     Probability density function of a Gaussian distribution with mean and stdev, evaluated at x
     :param x: the value to evaluate the PDF at
@@ -90,3 +90,7 @@ def euclidean_distance(x1, x2):
     for i in range(len(x1)):
         distance += math.pow((x1[i] - x2[i]), 2)
     return math.sqrt(distance)
+
+def print_report(data, test_results):
+    print "Correct: {correct}, Incorrect: {incorrect}, Accuracy: {accuracy:0.2f}".format(
+            correct=test_results[0], incorrect=test_results[1], accuracy=test_results[0]/float(sum(test_results)))

@@ -51,3 +51,17 @@ def fh(x,y):
     return math.pow(x[0],y[0])
 
 xmin = optimize.fmin(func=fh, x0=1, a)
+
+
+# data = load_split_data("./observed/classify_d99_k50_saved1.mat")
+# training_params = train(data['train'])
+# prob = calc_class_probability([0, 0,0], training_params)
+# print(classify([0, 0,0], training_params))
+# test_results = test(data['test'], training_params)
+# print test_results
+
+# data = scipy.io.loadmat("./observed/classify_d3_k2_saved1.mat")
+
+
+# clf = Classifier()
+# clf.clf_with_svm()
