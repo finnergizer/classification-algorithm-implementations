@@ -107,31 +107,14 @@ class KernelDensityEstimateNaiveBayesClassifier():
 class LogisticRegressionClassifier():
     def __init__(self):
         self.training_data = None
-        self.theta = None;
+        self.theta = None;  # training params
 
-    def load_split_data(self, file_name="./observed/classify_d3_k2_saved1.mat", test_percentage=0.3):
-        data = scipy.io.loadmat(file_name)
-        train = {}
-        test = {}
+    def transform_training_data(self, training_data):
+        training_data_transformed = []
         for cls in ['class_1', 'class_2']:
-            matrix = data[cls].tolist()
-            train[cls] = [[] for f in matrix]
-            test[cls] = [[] for f in matrix]
-            pop_count = int(len(matrix[0]) * test_percentage)
-            for i in range(pop_count):
-                # pop_index = random.choice(range(len(matrix[0])))
-                pop_index = 0
-                for idx, feature_vec in enumerate(matrix):
-                    test[cls][idx].append(feature_vec.pop(pop_index))
-            train[cls] = matrix
-        return {"train": train, "test": test}
-
-    def transform_training_data(self, split_data):
-        training_data = []
-        for cls in ['class_1', 'class_2']:
-            for i in range(len(split_data['train'][cls][0])):
-                training_data.append((util.column(split_data['train'][cls], i), cls))
-        return training_data
+            for i in range(len(training_data[cls][0])):
+                training_data_transformed.append((util.column(training_data[cls], i), cls))
+        return training_data_transformed
 
     def __class_to_boolean(self, cls):
         if cls == "class_1":
@@ -164,39 +147,24 @@ class LogisticRegressionClassifier():
             sum += self.__cost(theta, features, self.__class_to_boolean(cls))
         return sum / float(len(self.training_data))
 
-    def train(self, fname):
-        self.data = self.load_split_data(fname)
-        self.training_data = self.transform_training_data(self.data)
-        self.theta = optimize.fmin(self.J, x0=[1] * len(self.training_data[0][0]))
-        return
+    def train(self, training_data):
+        self.training_data = self.transform_training_data(training_data)
+        self.theta = optimize.fmin(self.J, x0=[1] * len(self.training_data[0][0]),disp=0)
+        return self.theta
 
-    def test(self):
+    def test(self, test_data):
         correct, incorrect = 0, 0
-        for item in np.transpose(self.data['test']['class_1']):
+        for item in np.transpose(test_data['class_1']):
             if self.hypothesis(self.theta, item) > 0.5:
                 incorrect += 1
             else:
                 correct += 1
-        for item in np.transpose(self.data['test']['class_2']):
+        for item in np.transpose(test_data['class_2']):
             if self.hypothesis(self.theta, item) < 0.5:
                 incorrect += 1
             else:
                 correct += 1
-        test_results = (correct, incorrect)
-        # print "Correct: {correct}, Incorrect: {incorrect}, Accuracy: {accuracy:0.2f}".format(
-        #     correct=test_results[0], incorrect=test_results[1], accuracy=test_results[0] / float(sum(test_results)))
-        return test_results
-
-
-# lrc = LogisticRegressionClassifier()
-
-
-# data = lrc.load_split_data()
-# lrc.data = lrc.transform_training_data(data)
-# xopt = optimize.fmin(lrc.J, x0=[1]*len(lrc.data[0][0]))
-
-# lrc.train("./observed/classify_d99_k50_saved2.mat")
-# lrc.test()
+        return (correct, incorrect)
 
 
 class KNearestNeighbourClassifier():

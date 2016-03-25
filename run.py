@@ -26,7 +26,7 @@ def run_lr():
         classifier = LogisticRegressionClassifier()
         data = util.load_split_data("./observed/{0}".format(name))
         training_params = classifier.train(data["train"])
-        test_results = classifier.test_kde(data["test"], training_params)
+        test_results = classifier.test(data["test"])
         util.print_report(data, test_results)
 
 def run_knn():
@@ -37,8 +37,8 @@ def run_knn():
         training_data = knn_classifier.train(data)
         test_results = knn_classifier.test(data['test'], training_data)
         util.print_report(data, test_results)
-# run()
-# run_kde()
 
 run_knn()
-# run_nb()
+run_kde()
+run_nb()
+run_lr()
