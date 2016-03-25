@@ -1,0 +1,12 @@
+Dataset Name,# Of Items In Training Dataset,# Of Items In Test Dataset,Correct Predictions,Incorrect Predictions,Accuracy
+classify_d3_k2_saved1.mat,2000,1600,400,326,74,0.81500
+classify_d3_k2_saved2.mat,2000,1600,400,271,129,0.67750
+classify_d3_k2_saved3.mat,2000,1600,400,346,54,0.86500
+classify_d4_k3_saved1.mat,2000,1600,400,294,106,0.73500
+classify_d4_k3_saved2.mat,2000,1600,400,279,121,0.69750
+classify_d5_k3_saved1.mat,2000,1600,400,289,111,0.72250
+classify_d5_k3_saved2.mat,2000,1600,400,280,120,0.70000
+classify_d99_k50_saved1.mat,3960,3168,792,586,206,0.73990
+classify_d99_k50_saved2.mat,3960,3168,792,579,213,0.73106
+classify_d99_k60_saved1.mat,3960,3168,792,591,201,0.74621
+classify_d99_k60_saved2.mat,3960,3168,792,561,231,0.70833
