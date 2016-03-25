@@ -1,5 +1,6 @@
 import math
 import scipy
+import csv
 import random
 
 # Basic statistical calculations given python lists of values
@@ -49,7 +50,7 @@ def column(matrix, i):
     """
     return [row[i] for row in matrix]
 
-def load_split_data(file_name="./observed/classify_d3_k2_saved1.mat", test_percentage=0.2, random=False):
+def load_split_data(file_name="./observed/classify_d3_k2_saved1.mat", test_percentage=0.2, rand=False):
     """
 
     :param file_name: The .mat file to load into a dictionary of python lists/matrices with rows as features, columns
@@ -70,7 +71,7 @@ def load_split_data(file_name="./observed/classify_d3_k2_saved1.mat", test_perce
         # How many column vectors (observations) should we pop from the matrix
         pop_count = int(len(matrix[0])*test_percentage)
         for i in range(pop_count):
-            pop_index = random.choice(range(len(matrix[0]))) if random else 0
+            pop_index = random.choice(range(len(matrix[0]))) if rand else 0
             for idx, feature_vec in enumerate(matrix):
                 test[cls][idx].append(feature_vec.pop(pop_index))
         train[cls] = matrix
@@ -94,3 +95,32 @@ def euclidean_distance(x1, x2):
 def print_report(data, test_results):
     print "Correct: {correct}, Incorrect: {incorrect}, Accuracy: {accuracy:0.2f}".format(
             correct=test_results[0], incorrect=test_results[1], accuracy=test_results[0]/float(sum(test_results)))
+
+class Report():
+    def __init__(self, report_name):
+        self.report_name = report_name
+        self.headers = ["Dataset Name", "# Of Items In Training Dataset", "# Of Items In Test Dataset",
+                        "Correct Predictions", "Incorrect Predictions", "Accuracy" ]
+        self.csv_array = [self.headers]
+
+
+    def add_row(self, dataset_name, data, test_results):
+        accuracy = "{:.5f}".format(test_results[0]/float(sum(test_results)))
+        items_trained = len(data["train"]["class_1"][0]) + len(data["train"]["class_2"][0])
+        items_tested = len(data["test"]["class_1"][0]) + len(data["test"]["class_2"][0])
+        total_items = items_trained + items_tested
+        row = [dataset_name, total_items, items_trained, items_tested, test_results[0], test_results[1], accuracy]
+        self.csv_array.append(row)
+
+    def write_to_results_csv(self, file_name=None):
+        if file_name is None:
+            file_name = "./results/" + self.report_name + ".csv"
+        with open(file_name, 'wb') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',',
+                                    quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            for row in self.csv_array:
+                writer.writerow(row)
+        print "CSV File with results available at {:s}".format(file_name)
+
+# def generate_csv_data(dataset_name, data, test_results):
+#     row =
