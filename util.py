@@ -2,6 +2,8 @@ import math
 import scipy
 import csv
 import random
+import scipy.io
+from tabulate import tabulate
 
 # Basic statistical calculations given python lists of values
 def mean(nums):
@@ -99,7 +101,7 @@ def print_report(data, test_results):
 class Report():
     def __init__(self, report_name):
         self.report_name = report_name
-        self.headers = ["Dataset Name", "# Of Items In Training Dataset", "# Of Items In Test Dataset",
+        self.headers = ["Dataset Name", "Total Items in Dataset", "# Of Training Items", "# Of Test Items",
                         "Correct Predictions", "Incorrect Predictions", "Accuracy" ]
         self.csv_array = [self.headers]
 
@@ -121,6 +123,12 @@ class Report():
             for row in self.csv_array:
                 writer.writerow(row)
         print "CSV File with results available at {:s}".format(file_name)
+        self.print_csv(file_name)
 
-# def generate_csv_data(dataset_name, data, test_results):
-#     row =
+    def print_csv(self, name):
+        with open(name) as f:
+            csv_reader = csv.reader(f, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            csv_list = []
+            for row in csv_reader:
+                csv_list.append(row)
+            print tabulate(csv_list[1:], headers=self.headers)

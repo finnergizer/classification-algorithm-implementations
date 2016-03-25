@@ -62,6 +62,5 @@ xmin = optimize.fmin(func=fh, x0=1, a)
 
 # data = scipy.io.loadmat("./observed/classify_d3_k2_saved1.mat")
 
-
 # clf = Classifier()
 # clf.clf_with_svm()

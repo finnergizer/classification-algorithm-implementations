@@ -1,4 +1,4 @@
-Dataset Name,# Of Items In Training Dataset,# Of Items In Test Dataset,Correct Predictions,Incorrect Predictions,Accuracy
+Dataset Name,Total Items in Dataset,# Of Items In Training Dataset,# Of Items In Test Dataset,Correct Predictions,Incorrect Predictions,Accuracy
 classify_d3_k2_saved1.mat,2000,1600,400,289,111,0.72250
 classify_d3_k2_saved2.mat,2000,1600,400,288,112,0.72000
 classify_d3_k2_saved3.mat,2000,1600,400,281,119,0.70250

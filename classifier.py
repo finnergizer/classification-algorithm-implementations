@@ -1,9 +1,6 @@
-import scipy.io
-import random
 import util
 import math
 from scipy import optimize
-
 import numpy as np
 
 
@@ -212,7 +209,6 @@ class KNearestNeighbourClassifier():
     def test(self, test_data, training_data=None, k_neighbours=None):
         incorrect, correct = 0, 0
         for cls in test_data:
-            print cls
             for item in np.transpose(test_data[cls]):
                 if self.compute_class(item, training_data) == cls:
                     correct += 1
@@ -221,7 +217,3 @@ class KNearestNeighbourClassifier():
         test_results = (correct, incorrect)
         return test_results
 
-# data = util.load_split_data()
-# knn_classifier = KNNClassifier(data)
-# training_data = knn_classifier.train(data)
-# knn_classifier.test(training_data)
