@@ -146,7 +146,7 @@ class LogisticRegressionClassifier():
 
     def train(self, training_data):
         self.training_data = self.transform_training_data(training_data)
-        self.theta = optimize.fmin(self.J, x0=[1] * len(self.training_data[0][0]),disp=0)
+        self.theta = optimize.fmin(self.J, x0=[1] * len(self.training_data[0][0]), disp=0)
         return self.theta
 
     def test(self, test_data):
@@ -216,4 +216,3 @@ class KNearestNeighbourClassifier():
                     incorrect += 1
         test_results = (correct, incorrect)
         return test_results
-
