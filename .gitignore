@@ -88,5 +88,4 @@ ENV/
 #############################
 
 .idea/
-observed/
 .DS_Store
