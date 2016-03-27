@@ -3,7 +3,10 @@ import scipy
 import csv
 import random
 import scipy.io
-from tabulate import tabulate
+try:
+    from tabulate import tabulate
+except Exception:
+    pass
 
 # Basic statistical calculations given python lists of values
 def mean(nums):
@@ -94,11 +97,11 @@ def euclidean_distance(x1, x2):
         distance += math.pow((x1[i] - x2[i]), 2)
     return math.sqrt(distance)
 
-def print_report(data, test_results):
-    print "Correct: {correct}, Incorrect: {incorrect}, Accuracy: {accuracy:0.2f}".format(
-            correct=test_results[0], incorrect=test_results[1], accuracy=test_results[0]/float(sum(test_results)))
-
 class Report():
+    """
+    A class to write the results for a given classifier to CSV and also pretty print them to stdout
+    using tabulate
+    """
     def __init__(self, report_name):
         self.report_name = report_name
         self.headers = ["Dataset Name", "Total Items in Dataset", "# Of Training Items", "# Of Test Items",
@@ -131,4 +134,7 @@ class Report():
             csv_list = []
             for row in csv_reader:
                 csv_list.append(row)
-            print tabulate(csv_list[1:], headers=self.headers)
+            try:
+                print tabulate(csv_list[1:], headers=self.headers)
+            except Exception:
+                pass

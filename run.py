@@ -4,6 +4,8 @@ import os
 import util
 import sys
 
+# This is the basic class that loads/splits data, trains classifiers, and tests them, depending on the arguments
+# provided.
 
 def run_nb():
     report = util.Report("naive-bayes-classifier-test")
@@ -13,7 +15,6 @@ def run_nb():
         classifier = NBClassifier()
         training_params = classifier.train(data["train"])
         test_results = classifier.test(data["test"], training_params)
-        # util.print_report(data, test_results)
         report.add_row(name, data, test_results)
     report.write_to_results_csv()
 
@@ -26,7 +27,6 @@ def run_kde():
         data = util.load_split_data("./observed/{0}".format(name))
         training_params = classifier.train(data["train"])
         test_results = classifier.test(data["test"], training_params)
-        # util.print_report(data, test_results)
         report.add_row(name, data, test_results)
     report.write_to_results_csv()
 
@@ -39,7 +39,6 @@ def run_lr():
         data = util.load_split_data("./observed/{0}".format(name))
         training_params = classifier.train(data["train"])
         test_results = classifier.test(data["test"])
-        # util.print_report(data, test_results)
         report.add_row(name, data, test_results)
     report.write_to_results_csv()
 
@@ -52,7 +51,6 @@ def run_knn():
         knn_classifier = KNearestNeighbourClassifier()
         training_data = knn_classifier.train(data)
         test_results = knn_classifier.test(data['test'], training_data)
-        # util.print_report(data, test_results)
         report.add_row(name, data, test_results)
     report.write_to_results_csv()
 
